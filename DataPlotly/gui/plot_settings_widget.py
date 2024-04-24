@@ -1000,6 +1000,7 @@ class DataPlotlyPanelWidget(QgsPanelWidget, WIDGET):  # pylint: disable=too-many
             self.pie_hole : ['pie'],
             self.pieLabelsLabel : ['pie'],
             self.pieLabelsCombo : ['pie'], 
+            self.includeZeroValues : ['pie']
         }
 
         # enable the widget according to the plot type
@@ -1148,6 +1149,7 @@ class DataPlotlyPanelWidget(QgsPanelWidget, WIDGET):  # pylint: disable=too-many
                            'layout_filter_by_atlas': self.filter_by_atlas_check.isChecked(),
                            'pie_hole' : self.pie_hole.value(),
                            'pie_labels' : self.pieLabelsCombo.currentText(),
+                           'include_zero_values' : self.includeZeroValues.isChecked(),
                            }
 
         if self.in_color_defined_button.isActive():
@@ -1379,6 +1381,8 @@ class DataPlotlyPanelWidget(QgsPanelWidget, WIDGET):  # pylint: disable=too-many
         self.pie_hole.setValue(settings.properties.get('pie_hole', 0))
         self.pieLabelsCombo.setCurrentText(
             settings.properties.get('pie_labels', 'Values'))
+        self.includeZeroValues.setChecked(
+            settings.properties.get('include_zero_values', False))
 
     def create_plot_factory(self) -> PlotFactory:
         """

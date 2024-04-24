@@ -224,11 +224,14 @@ class PlotLayoutItem(QgsLayoutItem):
         frameHtml = self.create_plot()
         if self.plot_settings[0].plot_type == 'pie':
             #We may want to override the defaults for pie charts to display values rather than percentages
-            if self.plot_settings[0].properties['pie_labels'] == 'Values':
+            if (self.plot_settings[0].properties['pie_labels'] if self.plot_settings[0].properties.get('pie_labels') else "") == 'Values':
                 pieChartReSearch = '(.*)("type": "pie", "values": )(\[[^\]]*\])(.*)'
                 regexResult = search(pieChartReSearch,frameHtml) #from re module
                 valueList = regexResult.group(3)
-                insertSection = ',"text": ' + str(valueList) + ',"textinfo": "text"'
+                if (self.plot_settings[0].properties['include_zero_values'] if self.plot_settings[0].properties.get('include_zero_values') else "") == True:
+                    insertSection = ',"text": ' + str(valueList) + ',"textinfo": "text"'
+                else:
+                    insertSection = ',"text": ' + str(valueList).replace('0', 'null').replace('0%', 'null') + ',"textinfo": "text"'
                 frameHtml = "".join([regexResult.group(1), regexResult.group(2), regexResult.group(3), insertSection, regexResult.group(4)])
         self.web_page.mainFrame().setHtml(frameHtml, base_url)
 
