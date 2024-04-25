@@ -222,18 +222,34 @@ class PlotLayoutItem(QgsLayoutItem):
         self.web_page.setViewportSize(QSize(int(self.rect().width()) * self.html_units_to_layout_units,
                                             int(self.rect().height()) * self.html_units_to_layout_units))
         frameHtml = self.create_plot()
-        if self.plot_settings[0].plot_type == 'pie':
+        defaultZoomFactor = self.plot_settings[0].properties['zoom_factor'] if self.plot_settings[0].properties.get('zoom_factor') else 10
+        if len(self.plot_settings) == 1:
+            frameHtml = self.configurePieSettings(frameHtml, self.plot_settings[0])
+            self.web_page.mainFrame().setHtml(frameHtml, base_url)
+            self.web_page.mainFrame().setZoomFactor(self.plot_settings[0].data_defined_zoom_factor if self.plot_settings[0].data_defined_zoom_factor != None else defaultZoomFactor)
+
+        # to plot many plots in the same figure
+        elif len(self.plot_settings) > 1:
+            for current, plot_setting in enumerate(self.plot_settings):
+                frameHtml = self.configurePieSettings(frameHtml, plot_setting)
+                self.web_page.mainFrame().setHtml(frameHtml, base_url)
+                self.web_page.mainFrame().setZoomFactor(plot_setting.data_defined_zoom_factor if plot_setting.data_defined_zoom_factor != None else defaultZoomFactor)
+        
+
+    def configurePieSettings(self, frameHtml, plot_setting):
+        if plot_setting.plot_type == 'pie':
             #We may want to override the defaults for pie charts to display values rather than percentages
-            if (self.plot_settings[0].properties['pie_labels'] if self.plot_settings[0].properties.get('pie_labels') else "") == 'Values':
+            if (plot_setting.properties['pie_labels'] if plot_setting.properties.get('pie_labels') else "") == 'Values':
                 pieChartReSearch = '(.*)("type": "pie", "values": )(\[[^\]]*\])(.*)'
                 regexResult = search(pieChartReSearch,frameHtml) #from re module
                 valueList = regexResult.group(3)
-                if (self.plot_settings[0].properties['include_zero_values'] if self.plot_settings[0].properties.get('include_zero_values') else "") == True:
+                if (plot_setting.properties['include_zero_values'] if plot_setting.properties.get('include_zero_values') else "") == True:
                     insertSection = ',"text": ' + str(valueList) + ',"textinfo": "text"'
                 else:
                     insertSection = ',"text": ' + str(valueList).replace('0', 'null').replace('0%', 'null') + ',"textinfo": "text"'
                 frameHtml = "".join([regexResult.group(1), regexResult.group(2), regexResult.group(3), insertSection, regexResult.group(4)])
-        self.web_page.mainFrame().setHtml(frameHtml, base_url)
+
+        return frameHtml
 
     def writePropertiesToElement(self, element, document, _) -> bool:
         for plot_setting in self.plot_settings:
