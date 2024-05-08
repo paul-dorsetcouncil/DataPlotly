@@ -339,6 +339,7 @@ class DataPlotlyPanelWidget(QgsPanelWidget, WIDGET):  # pylint: disable=too-many
         self.font_xticks_style.setCurrentFont(QFont('Arial', 10))
         self.font_ylabel_style.setCurrentFont(QFont('Arial', 10))
         self.font_yticks_style.setCurrentFont(QFont('Arial', 10))
+        self.font_pielabel_style.setCurrentFont(QFont('Arial', 10))
 
         # set range of axis min/max spin boxes
         self.x_axis_min.setRange(sys.float_info.max * -1, sys.float_info.max)
@@ -938,6 +939,7 @@ class DataPlotlyPanelWidget(QgsPanelWidget, WIDGET):  # pylint: disable=too-many
             self.font_xticks_style: ['all'],
             self.font_ylabel_style: ['all'],
             self.font_yticks_style: ['all'],
+            self.font_pielabel_style: ['pie'],
             self.font_title_color: ['all'],
             self.font_xlabel_color: ['all'],
             self.font_xticks_color: ['all'],
@@ -1193,6 +1195,10 @@ class DataPlotlyPanelWidget(QgsPanelWidget, WIDGET):  # pylint: disable=too-many
             self.font_yticks_style.currentFont().pointSize()),
             'font_yticks_family': self.font_yticks_style.currentFont().family(),
             'font_yticks_color': self.font_yticks_color.color().name(),
+            'font_pielabel_size': max(
+            self.font_pielabel_style.currentFont().pixelSize(),
+            self.font_pielabel_style.currentFont().pointSize()),
+            'font_pielabel_family': self.font_pielabel_style.currentFont().family(),
             'x_title': self.x_axis_title.text(),
             'y_title': self.y_axis_title.text(),
             'z_title': self.z_axis_title.text(),
@@ -1318,6 +1324,9 @@ class DataPlotlyPanelWidget(QgsPanelWidget, WIDGET):  # pylint: disable=too-many
                   settings.layout.get('font_ylabel_size', 10)))
         self.font_ylabel_color.setColor(
             QColor(settings.layout.get('font_ylabel_color', "#000000")))
+        self.font_pielabel_style.setCurrentFont(
+            QFont(settings.layout.get('font_pielabel_family', "Arial"),
+                  settings.layout.get('font_pielabel_size', 10)))
         self.x_axis_title.setText(settings.layout.get('x_title', ''))
         self.y_axis_title.setText(settings.layout.get('y_title', ''))
         self.z_axis_title.setText(settings.layout.get('z_title', ''))

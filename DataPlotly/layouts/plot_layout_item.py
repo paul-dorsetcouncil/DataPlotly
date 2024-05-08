@@ -15,7 +15,7 @@ from qgis.PyQt.QtCore import (
     QEventLoop,
     QTimer
 )
-from qgis.PyQt.QtGui import QPalette
+from qgis.PyQt.QtGui import QPalette, QFont
 from qgis.PyQt.QtWidgets import QGraphicsItem
 
 from qgis.core import (
@@ -27,7 +27,8 @@ from qgis.core import (
     QgsGeometry,
     QgsPropertyCollection
 )
-from re import search
+from re import search, sub
+from html import escape
 from qgis.PyQt.QtWebKitWidgets import QWebPage
 
 from DataPlotly.core.plot_settings import PlotSettings
@@ -227,13 +228,8 @@ class PlotLayoutItem(QgsLayoutItem):
             frameHtml = self.configurePieSettings(frameHtml, self.plot_settings[0])
             self.web_page.mainFrame().setHtml(frameHtml, base_url)
             self.web_page.mainFrame().setZoomFactor(self.plot_settings[0].data_defined_zoom_factor if self.plot_settings[0].data_defined_zoom_factor != None else defaultZoomFactor)
-
-        # to plot many plots in the same figure
-        elif len(self.plot_settings) > 1:
-            for current, plot_setting in enumerate(self.plot_settings):
-                frameHtml = self.configurePieSettings(frameHtml, plot_setting)
-                self.web_page.mainFrame().setHtml(frameHtml, base_url)
-                self.web_page.mainFrame().setZoomFactor(plot_setting.data_defined_zoom_factor if plot_setting.data_defined_zoom_factor != None else defaultZoomFactor)
+        else:
+            self.web_page.mainFrame().setHtml(frameHtml, base_url)
         
 
     def configurePieSettings(self, frameHtml, plot_setting):
@@ -249,6 +245,17 @@ class PlotLayoutItem(QgsLayoutItem):
                     insertSection = ',"text": ' + str(valueList).replace('0', 'null').replace('0%', 'null') + ',"textinfo": "text"'
                 frameHtml = "".join([regexResult.group(1), regexResult.group(2), regexResult.group(3), insertSection, regexResult.group(4)])
 
+            #Update slice label settings   
+            defaultZoomFactor = self.plot_settings[0].properties['zoom_factor'] if self.plot_settings[0].properties.get('zoom_factor') else 10
+            currentZoomFactor = plot_setting.data_defined_zoom_factor if plot_setting.data_defined_zoom_factor != None else defaultZoomFactor 
+            labelSize = plot_setting.layout.get('font_pielabel_size') if plot_setting.layout.get('font_pielabel_size') != None else 10
+            labelFamily = plot_setting.layout.get('font_pielabel_family') if plot_setting.layout.get('font_pielabel_family') != None else QFont('Arial', 10).family()
+            frameHtml = sub('(<\/script> )(?!.*\1)', """let sliceTextElements = document.getElementsByClassName('slicetext');
+		    for(let i = 0, max = sliceTextElements.length; i < max; i++){
+			    sliceTextElements[i].style.fontSize='"""+str(labelSize)+"""px';
+			    sliceTextElements[i].style.fontFamily= '"""+labelFamily+"""';
+		    }
+            </script>""",frameHtml)
         return frameHtml
 
     def writePropertiesToElement(self, element, document, _) -> bool:

@@ -427,6 +427,20 @@ class PlotFactory(QObject):  # pylint:disable=too-many-instance-attributes
             value, _ = self.settings.data_defined_properties.valueAsDouble(PlotSettings.PROPERTY_ZOOM_FACTOR,
                                                                            context, default_value)
             zoom_factor = value
+        pielabel_size = None
+        if self.settings.data_defined_properties.isActive(PlotSettings.PROPERTY_FONT_PIELABEL_SIZE):
+            default_value = self.settings.layout['font_pielabel_size']
+            context.setOriginalValueVariable(default_value)
+            value, _ = self.settings.data_defined_properties.valueAsString(PlotSettings.PROPERTY_FONT_PIELABEL_SIZE,
+                                                                           context, default_value)
+            pielabel_size = value
+        pielabel_family = None
+        if self.settings.data_defined_properties.isActive(PlotSettings.PROPERTY_FONT_PIELABEL_FAMILY):
+            default_value = self.settings.layout['font_pielabel_family']
+            context.setOriginalValueVariable(default_value)
+            value, _ = self.settings.data_defined_properties.valueAsString(PlotSettings.PROPERTY_FONT_PIELABEL_FAMILY,
+                                                                           context, default_value)
+            pielabel_family = value
 
         self.settings.data_defined_title = title
         self.settings.data_defined_legend_title = legend_title
@@ -438,6 +452,8 @@ class PlotFactory(QObject):  # pylint:disable=too-many-instance-attributes
         self.settings.data_defined_y_min = y_min
         self.settings.data_defined_y_max = y_max
         self.settings.data_defined_zoom_factor = zoom_factor
+        self.settings.data_defined_pielabel_size = pielabel_size
+        self.settings.data_defined_pielabel_family = pielabel_family
 
     def set_visible_region(self, region: QgsReferencedRectangle):
         """

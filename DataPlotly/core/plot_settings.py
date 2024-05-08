@@ -48,6 +48,8 @@ class PlotSettings:  # pylint: disable=too-many-instance-attributes
     PROPERTY_FONT_YTICKS_COLOR = 29
     PROPERTY_PIE_LABEL = 30
     PROPERTY_ZOOM_FACTOR = 31
+    PROPERTY_FONT_PIELABEL_FAMILY = 32
+    PROPERTY_FONT_PIELABEL_SIZE = 33
 
     DYNAMIC_PROPERTIES = {
         PROPERTY_FILTER: QgsPropertyDefinition('filter', 'Feature filter', QgsPropertyDefinition.Boolean),
@@ -74,6 +76,8 @@ class PlotSettings:  # pylint: disable=too-many-instance-attributes
         PROPERTY_FONT_YTICKS_SIZE: QgsPropertyDefinition('font_yticks_size', 'Font yticks size', QgsPropertyDefinition.String),
         PROPERTY_FONT_YTICKS_FAMILY: QgsPropertyDefinition('font_yticks_family', 'Font yticks family', QgsPropertyDefinition.String),
         PROPERTY_FONT_YTICKS_COLOR: QgsPropertyDefinition('font_yticks_color', 'Font yticks color', QgsPropertyDefinition.ColorWithAlpha),
+        PROPERTY_FONT_PIELABEL_FAMILY: QgsPropertyDefinition('font_pielabel_family', 'Font pielabel family', QgsPropertyDefinition.String),
+        PROPERTY_FONT_PIELABEL_SIZE: QgsPropertyDefinition('font_pielabel_size', 'Font pielabel size', QgsPropertyDefinition.String),
         PROPERTY_X_TITLE: QgsPropertyDefinition('x_title', 'X title', QgsPropertyDefinition.String),
         PROPERTY_Y_TITLE: QgsPropertyDefinition('y_title', 'Y title', QgsPropertyDefinition.String),
         PROPERTY_Z_TITLE: QgsPropertyDefinition('z_title', 'Z title', QgsPropertyDefinition.String),
@@ -163,6 +167,8 @@ class PlotSettings:  # pylint: disable=too-many-instance-attributes
             'font_yticks_size': 10,
             'font_yticks_family': "Arial",
             'font_yticks_color': "#000000",
+            'font_pielabel_size': 10,
+            'font_pielabel_family': "Arial",
             'xaxis': None,
             'bar_mode': None,
             'x_type': None,
@@ -226,6 +232,8 @@ class PlotSettings:  # pylint: disable=too-many-instance-attributes
         self.data_defined_y_max = None
         self.data_defined_zoom_factor = None
         self.source_layer_id = source_layer_id
+        self.data_defined_pielabel_size = None
+        self.data_defined_pielabel_family = None
         
 
         # multiple_dock

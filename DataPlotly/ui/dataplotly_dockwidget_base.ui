@@ -320,7 +320,7 @@ QListWidget::item::selected {
                 <property name="geometry">
                  <rect>
                   <x>0</x>
-                  <y>-356</y>
+                  <y>0</y>
                   <width>665</width>
                   <height>1096</height>
                  </rect>
@@ -940,8 +940,8 @@ QListWidget::item::selected {
                  <rect>
                   <x>0</x>
                   <y>0</y>
-                  <width>407</width>
-                  <height>845</height>
+                  <width>686</width>
+                  <height>742</height>
                  </rect>
                 </property>
                 <layout class="QGridLayout" name="gridLayout_25" columnstretch="0,0,0">
@@ -1256,7 +1256,7 @@ QListWidget::item::selected {
                       </property>
                      </widget>
                     </item>
-                    <item row="5" column="0" colspan="4">
+                    <item row="6" column="0" colspan="4">
                      <widget class="QgsCollapsibleGroupBox" name="layout_font_sizes">
                       <property name="title">
                        <string>Title and labels customization</string>
@@ -1268,6 +1268,13 @@ QListWidget::item::selected {
                        <bool>true</bool>
                       </property>
                       <layout class="QGridLayout" name="gridLayout_11">
+                       <item row="7" column="0">
+                        <widget class="QLabel" name="font_pielabel_label">
+                         <property name="text">
+                          <string>Pie labels font</string>
+                         </property>
+                        </widget>
+                       </item>
                        <item row="6" column="0">
                         <widget class="QLabel" name="font_yticks_label">
                          <property name="text">
@@ -1329,6 +1336,13 @@ QListWidget::item::selected {
                        </item>
                        <item row="6" column="2">
                         <widget class="QgsFontButton" name="font_yticks_style">
+                         <property name="mode">
+                          <enum>QgsFontButton::ModeQFont</enum>
+                         </property>
+                        </widget>
+                       </item>
+                       <item row="7" column="2">
+                        <widget class="QgsFontButton" name="font_pielabel_style">
                          <property name="mode">
                           <enum>QgsFontButton::ModeQFont</enum>
                          </property>
