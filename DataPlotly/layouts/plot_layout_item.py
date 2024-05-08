@@ -255,6 +255,15 @@ class PlotLayoutItem(QgsLayoutItem):
 			    sliceTextElements[i].style.fontSize='"""+str(labelSize)+"""px';
 			    sliceTextElements[i].style.fontFamily= '"""+labelFamily+"""';
 		    }
+            //This section seems to work in a browser but not in a layout. The goal was to increase the size of the legend. 
+            let pieBoxes = document.getElementsByClassName('pielayer');
+		    for(let i = 0, max = pieBoxes.length; i < max; i++){
+			   pieBoxes[i].style.transform = "scale(1) translate(-25%, 0%)";
+		     }
+            let legendBoxes = document.getElementsByClassName('scrollbox');
+		    for(let i = 0, max = legendBoxes.length; i < max; i++){
+			    legendBoxes[i].style.transform = "scale(1.5) translate(-15%, 0%)";
+		    }
             </script>""",frameHtml)
         return frameHtml
 
