@@ -89,7 +89,7 @@ class PlotLayoutItem(QgsLayoutItem):
 
         return 72
 
-    def set_linked_map(self, map):
+    def set_linked_map(self, map):        
         """
         Sets the map linked to the plot item
         """
@@ -103,7 +103,7 @@ class PlotLayoutItem(QgsLayoutItem):
         self.linked_map.mapRotationChanged.connect(self.map_extent_changed)
         self.linked_map.destroyed.connect(self.disconnect_current_map)
 
-    def disconnect_current_map(self):
+    def disconnect_current_map(self):         
         if not self.linked_map:
             return
 
@@ -116,7 +116,7 @@ class PlotLayoutItem(QgsLayoutItem):
             pass
         self.linked_map = None
 
-    def add_plot(self):
+    def add_plot(self):          
         """
         Adds a new plot to the item
         """
@@ -125,7 +125,7 @@ class PlotLayoutItem(QgsLayoutItem):
         self.plot_settings.append(plot_setting)
         return plot_setting
 
-    def duplicate_plot(self, index):
+    def duplicate_plot(self, index):         
         """
         Duplicates a plot and adds it to the item
         """
@@ -138,13 +138,13 @@ class PlotLayoutItem(QgsLayoutItem):
             self.plot_settings.insert(index + 1, plot_setting)
             return plot_setting
 
-    def remove_plot(self, index):
+    def remove_plot(self, index):        
         """
         Removes a plot from the item
         """
         return self.plot_settings.pop(index)
 
-    def set_plot_settings(self, plot_id, settings):
+    def set_plot_settings(self, plot_id, settings):         
         """
         Sets the plot settings to show in the item
         """
@@ -155,7 +155,7 @@ class PlotLayoutItem(QgsLayoutItem):
             self.html_loaded = False
             self.invalidateCache()
 
-    def draw(self, context):
+    def draw(self, context):         
         if not self.html_loaded:
             self.load_content()
 
@@ -175,7 +175,7 @@ class PlotLayoutItem(QgsLayoutItem):
         self.web_page.mainFrame().render(painter)
         painter.restore()
 
-    def create_plot(self):
+    def create_plot(self):       
         polygon_filter, visible_features_only = self.get_polygon_filter(0)
 
         config = {'displayModeBar': False, 'staticPlot': True}
@@ -200,7 +200,7 @@ class PlotLayoutItem(QgsLayoutItem):
             with open(plot_path) as myfile:
                 return myfile.read()
 
-    def get_polygon_filter(self, index=0):
+    def get_polygon_filter(self, index=0):         
         polygon_filter = None
         visible_features_only = False
 
@@ -217,22 +217,22 @@ class PlotLayoutItem(QgsLayoutItem):
 
         return polygon_filter, visible_features_only
 
-    def load_content(self):
+    def load_content(self):         
         self.html_loaded = False
         base_url = QUrl.fromLocalFile(self.layout().project().absoluteFilePath())
         self.web_page.setViewportSize(QSize(int(self.rect().width()) * self.html_units_to_layout_units,
                                             int(self.rect().height()) * self.html_units_to_layout_units))
         frameHtml = self.create_plot()
-        defaultZoomFactor = self.plot_settings[0].properties['zoom_factor'] if self.plot_settings[0].properties.get('zoom_factor') else 10
+        defaultZoomFactor = self.plot_settings[0].properties['zoom_factor'] if self.plot_settings[0].properties.get('zoom_factor') else 10          
         if len(self.plot_settings) == 1:
-            frameHtml = self.configurePieSettings(frameHtml, self.plot_settings[0])
+            frameHtml = self.configurePieSettings(frameHtml, self.plot_settings[0])   
             self.web_page.mainFrame().setHtml(frameHtml, base_url)
-            self.web_page.mainFrame().setZoomFactor(self.plot_settings[0].data_defined_zoom_factor if self.plot_settings[0].data_defined_zoom_factor != None else defaultZoomFactor)
+            self.web_page.mainFrame().setZoomFactor(self.plot_settings[0].data_defined_zoom_factor if self.plot_settings[0].data_defined_zoom_factor != None else defaultZoomFactor)                        
         else:
-            self.web_page.mainFrame().setHtml(frameHtml, base_url)
-        
-
-    def configurePieSettings(self, frameHtml, plot_setting):
+            self.web_page.mainFrame().setHtml(frameHtml, base_url)            
+            
+                       
+    def configurePieSettings(self, frameHtml, plot_setting):        
         if plot_setting.plot_type == 'pie':
             #We may want to override the defaults for pie charts to display values rather than percentages
             if (plot_setting.properties['pie_labels'] if plot_setting.properties.get('pie_labels') else "") == 'Values':
@@ -240,16 +240,14 @@ class PlotLayoutItem(QgsLayoutItem):
                 regexResult = search(pieChartReSearch,frameHtml) #from re module
                 valueList = regexResult.group(3)
                 if (plot_setting.properties['include_zero_values'] if plot_setting.properties.get('include_zero_values') else "") == True:
-                    insertSection = ',"text": ' + str(valueList) + ',"textinfo": "text"'
+                    insertSection = ',"text": ' + str(valueList) + ',"textinfo": "text"' 
                 else:
                     insertSection = ',"text": ' + str(valueList).replace('0', 'null').replace('0%', 'null') + ',"textinfo": "text"'
                 frameHtml = "".join([regexResult.group(1), regexResult.group(2), regexResult.group(3), insertSection, regexResult.group(4)])
 
-            #Update slice label settings   
-            defaultZoomFactor = self.plot_settings[0].properties['zoom_factor'] if self.plot_settings[0].properties.get('zoom_factor') else 10
-            currentZoomFactor = plot_setting.data_defined_zoom_factor if plot_setting.data_defined_zoom_factor != None else defaultZoomFactor 
+            #Update slice label settings                
             labelSize = plot_setting.layout.get('font_pielabel_size') if plot_setting.layout.get('font_pielabel_size') != None else 10
-            labelFamily = plot_setting.layout.get('font_pielabel_family') if plot_setting.layout.get('font_pielabel_family') != None else QFont('Arial', 10).family()
+            labelFamily = plot_setting.layout.get('font_pielabel_family') if plot_setting.layout.get('font_pielabel_family') != None else QFont('Arial', labelSize).family()
             frameHtml = sub('(<\/script> )(?!.*\1)', """let sliceTextElements = document.getElementsByClassName('slicetext');
 		    for(let i = 0, max = sliceTextElements.length; i < max; i++){
 			    sliceTextElements[i].style.fontSize='"""+str(labelSize)+"""px';
@@ -258,13 +256,13 @@ class PlotLayoutItem(QgsLayoutItem):
             </script>""",frameHtml)
         return frameHtml
 
-    def writePropertiesToElement(self, element, document, _) -> bool:
+    def writePropertiesToElement(self, element, document, _) -> bool:         
         for plot_setting in self.plot_settings:
             element.appendChild(plot_setting.write_xml(document))
         element.setAttribute('linked_map', self.linked_map.uuid() if self.linked_map else '')
         return True
 
-    def readPropertiesFromElement(self, element, document, context) -> bool:
+    def readPropertiesFromElement(self, element, document, context) -> bool:          
         self.plot_settings = []
 
         child = element.firstChildElement('Option')
@@ -287,7 +285,7 @@ class PlotLayoutItem(QgsLayoutItem):
         self.invalidateCache()
         return reading_result
 
-    def finalizeRestoreFromXml(self):
+    def finalizeRestoreFromXml(self):        
         # has to happen after ALL items have been restored
         if self.layout() and self.linked_map_uuid:
             self.disconnect_current_map()
@@ -295,17 +293,17 @@ class PlotLayoutItem(QgsLayoutItem):
             if map:
                 self.set_linked_map(map)
 
-    def loading_html_finished(self):
+    def loading_html_finished(self):         
         self.html_loaded = True
         self.invalidateCache()
         self.update()
 
-    def refresh(self):
+    def refresh(self):        
         super().refresh()
         self.html_loaded = False
         self.invalidateCache()
 
-    def map_extent_changed(self):
+    def map_extent_changed(self):       
         filter_by_map = False
         for setting in self.plot_settings:
             if setting.properties.get('layout_filter_by_map', False):

@@ -13,7 +13,7 @@ repository=https://github.com/ghtmtt/DataPlotly
 # End of mandatory metadata
 
 # Done by qgis-plugin-ci
-version=master
+version=dc-modified
 changelog=
 commitNumber=
 commitSha1=
